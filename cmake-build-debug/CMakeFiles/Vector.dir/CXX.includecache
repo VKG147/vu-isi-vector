@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/vlada/Documents/Git/VU ISI/OP/vu-isi-vector/Vector.h
+iostream
+-
+algorithm
+-
+memory
+-
+cstddef
+-
+stdexcept
+-
+limits
+-
+string
+-
+isIterator.h
+C:/Users/vlada/Documents/Git/VU ISI/OP/vu-isi-vector/isIterator.h
+
+C:/Users/vlada/Documents/Git/VU ISI/OP/vu-isi-vector/isIterator.h
+type_traits
+-
+iterator
+-
+vector
+-
+utility
+-
+
+C:/Users/vlada/Documents/Git/VU ISI/OP/vu-isi-vector/main.cpp
+iostream
+-
+Vector.h
+C:/Users/vlada/Documents/Git/VU ISI/OP/vu-isi-vector/Vector.h
+vector
+-
+
