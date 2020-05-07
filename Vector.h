@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <limits>
 #include <string>
+#include "isIterator.h"
 
 template<class T, class Allocator = std::allocator<T>>
 class Vector {
@@ -53,6 +54,28 @@ public:
     {
         alloc = allocator;;
         create(n, val);
+    }
+    template< class InputIt, class = typename std::enable_if_t<is_iterator<InputIt>::value>>
+    Vector(InputIt first, InputIt last, const allocator_type &allocator = allocator_type())
+    {
+        alloc = allocator;
+        create(first, last);
+    }
+    Vector(const Vector<T>& v, const allocator_type &allocator = allocator_type())
+    {
+        alloc = allocator;
+        create(v.begin(), v.end());
+    }
+    Vector(Vector<T>&& v, const allocator_type &allocator = allocator_type()) noexcept
+    {
+        alloc = allocator;
+        create();
+        v.swap(*this);
+    }
+    Vector(std::initializer_list<value_type> il, const allocator_type &allocator = allocator_type())
+    {
+        alloc = allocator;
+        create(il.begin(), il.end());
     }
 
     ~Vector()
