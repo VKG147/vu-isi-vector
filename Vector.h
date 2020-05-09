@@ -21,6 +21,9 @@ class Vector {
     using const_reference = const T&;
 
     using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
 private:
     iterator root_;
@@ -105,6 +108,24 @@ public:
     {
         destroy();
     }
+
+    /* MEMBER FUNCTIONS */
+    // Iterators
+    iterator begin() { return root_; }
+    const_iterator begin() const { return root_; }
+    const_iterator cbegin() const { return root_; }
+
+    iterator end() { return end_; }
+    const_iterator end() const { return end_; }
+    const_iterator cend() const { return end_; }
+
+    reverse_iterator rbegin() { return end_; }
+    const_reverse_iterator rbegin() const { return end_; }
+    const_reverse_iterator crbegin() const { return end_; }
+
+    reverse_iterator rend() { return root_; }
+    const_reverse_iterator rend() const { return root_; }
+    const_reverse_iterator crend() const { return root_; }
 
     // Element access
     reference front()
