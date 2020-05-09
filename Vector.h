@@ -160,6 +160,14 @@ public:
     T* data() { return root_; }
     const T* data() const { return root_; }
 
+    //  Getters
+    size_type size() const noexcept { return end_ - root_; }
+    size_type capacity() const noexcept { return limit_ - root_; }
+    size_type max_size() const noexcept { return std::numericlimit_s<difference_type>::max(); }
+    allocator_type get_allocator() const { return alloc; }
+
+    bool empty() const noexcept { return root_ == end_; }
+
     // Modifiers
     void clear() noexcept
     {
@@ -170,6 +178,21 @@ public:
             }
         }
         end_ = root_;
+    }
+
+    template< class... Args >
+    iterator emplace(const_iterator pos, Args&&... args)
+    {
+        T val = T(std::forward<Args>(args)...);
+        return insert(pos, val);
+    }
+
+    template<class... Args>
+    void emplace_back(Args&&... args)
+    {
+        T val = T(std::forward<Args>(args)...);
+        if (end_ == limit_) grow();
+        append(val);
     }
 
     void push_back(const T& val)
