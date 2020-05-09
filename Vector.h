@@ -39,6 +39,29 @@ private:
         end_ = limit_ = root_ + n;
         std::uninitialized_fill(root_, end_, value);
     }
+    template< class InputIt, class = typename std::enable_if_t<is_iterator<InputIt>::value>>
+    void create(InputIt begin, InputIt end)
+    {
+        root_ = alloc.allocate(end - begin);
+        end_ = limit_ = std::uninitialized_copy(begin, end, root_);
+    }
+    void create(const Vector<T>&& other)
+    {
+        root_ = alloc.allocate(other.end() - other.begin());
+        end_ = limit_ = std::uninitialized_copy(std::make_move_iterator(other.begin()), std::make_move_iterator(other.end()), root_);
+    }
+
+    void destroy()
+    {
+        if (root_) {
+            iterator it = end_;
+            while (it != root_) {
+                alloc.destroy(--it);
+            }
+            alloc.deallocate(root_, limit_ - root_);
+        }
+        root_ = end_ = limit_;
+    }
 
 public:
     /* CONSTRUCTORS */
