@@ -350,4 +350,59 @@ public:
         end_ += count;
         return root_ + index;
     }
+
+    void assign( size_type count, const T& value )
+    {
+        clear();
+        if (count > capacity()) change_size(count);
+        for (int i = 0; i < count; ++i) {
+            append(value);
+        }
+    }
+    template< class InputIt, class = typename std::enable_if_t<is_iterator<InputIt>::value>>
+    void assign( InputIt first, InputIt last )
+    {
+        size_type count = last - first;
+        clear();
+
+        if (count > capacity()) change_size(count);
+        for (int i = 0; i < count; ++i) {
+            append(*(first + i));
+        }
+    }
+    void assign( std::initializer_list<T> ilist )
+    {
+        size_type count = ilist.size();
+        clear();
+
+        if (count > capacity()) change_size(count);
+        for (int i = 0; i < count; ++i) {
+            append(*(ilist.begin() + i));
+        }
+    }
+
+    void resize(size_type count, const value_type& value = value_type())
+    {
+        if (count == size()) return;
+        if (count < size()) {
+            while(size() > count) alloc.destroy(--end_);
+            return;
+        }
+
+        if(count > capacity()) change_size(count);
+        std::uninitialized_fill(end_, end_ + (count - size()), value);
+        end_ += (count - size());
+    }
+
+    void print()
+    {
+        iterator it = root_;
+        std::cout << "[ ";
+        while (it != end_) {
+            std::cout << " " << *it;
+            it++;
+            if(it != end_) std::cout << ", ";
+        }
+        std::cout << " ]\n";
+    }
 };
