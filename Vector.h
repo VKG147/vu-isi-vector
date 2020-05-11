@@ -10,7 +10,8 @@
 #include "isIterator.h"
 
 template<class T, class Allocator = std::allocator<T>>
-class Vector {
+class Vector
+{
     using value_type = T;
 
     using allocator_type = Allocator;
@@ -168,6 +169,23 @@ public:
 
     bool empty() const noexcept { return root_ == end_; }
 
+    void reserve(size_type newSize)
+    {
+        if (newSize <= capacity())
+            return;
+        if (newSize > max_size())
+            throw std::length_error("Can't reserve size for " + std::to_string(newSize) + " elements");
+
+        change_size(newSize);
+    }
+
+    void shrink_to_fit()
+    {
+        if (size() == capacity())
+            return;
+        change_size(size());
+    }
+
     // Modifiers
     void clear() noexcept
     {
@@ -210,5 +228,126 @@ public:
     {
         if (root_ == end_) return;
         alloc.destroy(--end_);
+    }
+
+    iterator erase(const_iterator pos)
+    {
+        size_type index = pos - root_;
+        iterator pos_it = root_ + index;
+
+        while(pos_it != (end_ - 1)) {
+            alloc.destroy(pos_it);
+            alloc.construct(pos_it, *(pos_it+1));
+            pos_it++;
+        }
+        alloc.destroy(--end_);
+        return root_ + index;;
+    }
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        if(first == last || first < root_ || last > end_) return nullptr;
+        size_type indexFrom = first - root_;
+        size_type indexTo = last - root_;
+        iterator from = root_ + indexFrom;
+        iterator to = root_ + indexTo;
+
+        for(iterator it = from; it < to; it++) alloc.destroy(from);
+
+        while(to != end_) {
+            *from = *to;
+            from++;
+            to++;
+        }
+        end_ -= (indexTo - indexFrom);
+    }
+
+    void swap(Vector<T> &other)
+    {
+        iterator temp;
+        temp = other.end_;
+        other.end_ = end_;
+        end_ = temp;
+
+        temp = other.root_;
+        other.root_ = root_;
+        root_ = temp;
+    }
+
+    iterator insert(const_iterator pos, const T& value)
+    {
+        size_type index = pos - root_;
+        if (end_ == limit_) grow();
+
+        if(size() != 0) shift(root_ + index, 1);
+
+        alloc.construct(root_ + index, value);
+        end_++;
+        return root_ + index;
+    }
+    iterator insert( const_iterator pos, T&& value )
+    {
+        size_type index = pos - root_;
+        if (end_ == limit_) grow();
+
+        if(size() != 0) shift(root_ + index, 1);
+
+        alloc.construct(root_ + index, std::move(value));
+        end_++;
+        return root_ + index;
+    }
+    iterator insert( const_iterator pos, size_type count, const T& value )
+    {
+        size_type index = pos - root_;
+        if (end_ == limit_ || size() + count > capacity()) {
+            size_type newSize = std::max(size()*2, size_type(1));
+            while(newSize < size() + count) newSize *= 2;
+            change_size(newSize);
+        }
+
+        if(size() != 0) shift(root_ + index, count);
+
+        for(int i = 0; i < count; ++i) {
+            alloc.construct(root_ + index + i, value);
+        }
+        end_ += count;
+        return root_ + index;
+    }
+    template< class InputIt, class = typename std::enable_if_t<is_iterator<InputIt>::value>>
+    iterator insert( const_iterator pos, InputIt first, InputIt last )
+    {
+        size_type index = pos - root_;
+        size_type count = last - first;
+        if (end_ == limit_ || size() + count > capacity()) {
+            size_type newSize = std::max(size()*2, size_type(1));
+            while(newSize < size() + count) newSize *= 2;
+            change_size(newSize);
+        }
+
+        if(size() != 0) shift(root_ + index, count);
+
+        for(int i = 0; i < count; ++i) {
+            alloc.construct(root_ + index + i, *(first + i));
+        }
+        end_ += count;
+        return root_ + index;
+    }
+    iterator insert( const_iterator pos, std::initializer_list<T> ilist )
+    {
+        size_type index = pos - root_;
+        size_type count = ilist.size();
+
+        if (end_ == limit_ || size() + count > capacity()) {
+            size_type newSize = std::max(size()*2, size_type(1));
+            while(newSize < size() + count) newSize *= 2;
+            change_size(newSize);
+        }
+
+        if(size() != 0) shift(root_ + index, count);
+
+        for(int i = 0; i < count; ++i) {
+            alloc.construct(root_ + index + i, *(ilist.begin() + i));
+        }
+        end_ += count;
+        return root_ + index;
     }
 };
