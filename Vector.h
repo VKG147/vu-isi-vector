@@ -16,7 +16,11 @@ class Vector
 
     using allocator_type = Allocator;
 
+    using pointer = typename std::allocator_traits<allocator_type>::pointer;
+    using const_pointer = typename std::allocator_traits<allocator_type>::const_pointer;
+
     using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
 
     using reference = T&;
     using const_reference = const T&;
@@ -65,6 +69,49 @@ private:
             alloc.deallocate(root_, limit_ - root_);
         }
         root_ = end_ = limit_;
+    }
+
+    void grow()
+    {
+        size_type newSize = std::max(size_type(1), 2 * capacity());
+        change_size(newSize);
+    }
+
+    void change_size(size_type newSize)
+    {
+        iterator newRoot = alloc.allocate(newSize);
+        iterator newEnd = std::uninitialized_copy(root_, end_, newRoot);
+        destroy();
+
+        root_ = newRoot;
+        end_ = newEnd;
+        limit_ = root_ + newSize;
+    }
+
+    void append(const T& value)
+    {
+        alloc.construct(end_++, value);
+    }
+    void append(T&& value)
+    {
+        alloc.construct(end_++, std::move(value));
+    }
+
+    void shift(iterator from, size_type units)
+    {
+        for(iterator it = end_ - 1; it >= from; it--) {
+            if (it + units < end_) {
+                alloc.destroy(it + units);
+            }
+            alloc.construct(it + units, *it);
+        }
+
+        for (int i = 0; i < units; ++i) {
+            if (from + i >= end_) {
+                break;
+            }
+            alloc.destroy(from + i);
+        }
     }
 
 public:
@@ -164,7 +211,7 @@ public:
     //  Getters
     size_type size() const noexcept { return end_ - root_; }
     size_type capacity() const noexcept { return limit_ - root_; }
-    size_type max_size() const noexcept { return std::numericlimit_s<difference_type>::max(); }
+    size_type max_size() const noexcept { return std::numeric_limits<difference_type>::max(); }
     allocator_type get_allocator() const { return alloc; }
 
     bool empty() const noexcept { return root_ == end_; }
