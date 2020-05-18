@@ -405,4 +405,62 @@ public:
         }
         std::cout << " ]\n";
     }
+
+    // Operators
+    T& operator[](size_type i)
+    {
+        if (i >= size())
+            throw std::out_of_range("Vector subscript out of range");
+        return root_[i];
+    }
+    const T& operator[](size_type i) const
+    {
+        if (i >= size())
+            throw std::out_of_range("Vector subscript out of range");
+        return root_[i];
+    }
+    Vector& operator=(const Vector& v)
+    {
+        if (&v == this)
+            return *this;
+
+        destroy();
+        create(v.begin(), v.end());
+    }
+
+    /* NON-MEMBER FUNCTIONS */
+    friend void swap(Vector<T>& lhs, Vector<T>& rhs)
+    {
+        lhs.swap(rhs);
+    }
+
+    friend bool operator== (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        if (lhs.size() != rhs.size()) return false;
+        for (int i = 0; i < lhs.size(); ++i) {
+            if(lhs[i] != rhs[i]) return false;
+        }
+        return true;
+    }
+    friend bool operator!= (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        return !(lhs == rhs);
+    }
+
+    friend bool operator< (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+    }
+    friend bool operator<= (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        return lhs < rhs || (!(lhs > rhs) && !(lhs < rhs));
+    }
+    friend bool operator> (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        return std::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end());
+    }
+    friend bool operator>= (const Vector<T> &lhs, const Vector<T> &rhs)
+    {
+        return lhs > rhs || (!(lhs > rhs) && !(lhs < rhs));
+    }
 };
