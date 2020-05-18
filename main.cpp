@@ -35,7 +35,7 @@ void runVectorComparisonTests() {
             v2.push_back(i);
         t2 = std::chrono::high_resolution_clock::now();
         diff = t2 - t1;
-        std::cout << "Laikas " << *sz << " elementu uzpildymui Vector: " << diff.count() << "s\n";
+        std::cout << "Laikas " << *sz << " elementu uzpildymui Vector: " << diff.count() << "s\n\n";
         v2.clear();
     }
 }

@@ -34,7 +34,6 @@ private:
     iterator root_;
     iterator end_;
     iterator limit_;
-
     allocator_type alloc;
 
     void create()
