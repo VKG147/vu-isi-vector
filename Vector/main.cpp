@@ -2,11 +2,22 @@
 #include "Vector.h"
 #include <vector>
 #include <chrono>
+#include <string>
 
 void runVectorComparisonTests();
 
 int main() {
-    runVectorComparisonTests();
+    //runVectorComparisonTests();
+
+
+    Vector<std::string> v1 = { "Aaaa", "Bbbb", "Cccc" };
+    Vector<std::string> v2 = { "Dddd", "Eeee", "Ffff" };
+
+    v1.print(); v2.print();
+
+    v1.swap(v2);
+
+    v1.print(); v2.print();
 
     return 0;
 }
