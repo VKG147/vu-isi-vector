@@ -4,8 +4,6 @@
 
 void genRandomStudents(vector<Student>& students, int student_count, int grade_count, RandomGenerator* generator, int start_index)
 {
-	students.clear();
-	
 	string dName = "Vardas";
 	string dSurname = "Pavarde";
 

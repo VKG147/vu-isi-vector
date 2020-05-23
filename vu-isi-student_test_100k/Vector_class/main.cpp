@@ -94,7 +94,7 @@ void runTests(RandomGenerator* generator)
 		std::sort(students.begin(), students.end(), compareByFinal);
 		t2 = std::chrono::high_resolution_clock::now();
 		diff = t2 - t1;
-		std::cout << "Laikas " << *it_size << " Vector rusiavimui: " << diff.count() << "s\n";
+		std::cout << "Laikas " << *it_size << " studentu rusiavimui: " << diff.count() << "s\n";
 
 		// Seperating into two groups
 		t1 = std::chrono::high_resolution_clock::now();
